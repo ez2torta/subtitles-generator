@@ -21,7 +21,7 @@ Use at your own risk, especially after the implementation ot text to speech feat
 ## How to Use
 
 1. Open the application.
-2. For Subtitle Generation, paste your text in the text field at the top.
+2. For Subtitle Generation, paste your text in the text field at the top (a new subtitle is detected when there is an empty line)
 3. For Silence Removal, use the "Select MP4 file" button to choose your file.
 4. Select your desired mode from the drop-down menu.
 5. Click "Run" to execute the chosen operation.
