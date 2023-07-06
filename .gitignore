@@ -1,4 +1,5 @@
 *.png
+!readme-images/*.png
 *.mp3
 __pycache__
 output

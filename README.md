@@ -16,6 +16,8 @@ Use at your own risk, especially after the implementation ot text to speech feat
 2. **Silence Removal**: Select the "Remove Silence" mode, select the MP4 file and click "Run". The application will output a series of MP3 files, each containing a non-silent segment from the original audio.
 3. **Text-to-Speech**: Coming soon! This feature will utilize the Azure voice Microsoft Text-to-Speech API to convert your text into speech, you can customize the code related to text-to-speech to use an open source or free option.
 
+![home screen](readme-images/image1.png)
+
 ## How to Use
 
 1. Open the application.
