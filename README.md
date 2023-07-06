@@ -4,6 +4,10 @@ Subtitle Generator is a simple and easy-to-use Python application that can gener
 
 It is meant for creators that want basic subtitles as images, without having to deal with one-by-one convertion or paid/limited services. 
 
+## Disclaimer
+
+This app is meant to serve a smaller target of users who want to generate just subtitles images in the order of 10 to 50 images. I have not tested higher amounts or too many different styles. A big change in configurations could result in unwanted appearance. 
+
 ## Features
 
 1. **Subtitle Generation**: Paste your text in the provided text field, select the "Subtitles" mode, and click "Run". The application will generate PNG images for each line of text and save them in a timestamped folder.
