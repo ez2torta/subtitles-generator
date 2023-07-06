@@ -8,6 +8,8 @@ It is meant for creators that want basic subtitles as images, without having to 
 
 This app is meant to serve a smaller target of users who want to generate just subtitles images in the order of 10 to 50 images. I have not tested higher amounts or too many different styles. A big change in configurations could result in unwanted appearance. 
 
+Use at your own risk, especially after the implementation ot text to speech features. 
+
 ## Features
 
 1. **Subtitle Generation**: Paste your text in the provided text field, select the "Subtitles" mode, and click "Run". The application will generate PNG images for each line of text and save them in a timestamped folder.
