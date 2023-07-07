@@ -19,5 +19,5 @@ def remove_silence(input_file, project_name, silence_threshold=-40, min_silence_
         start = max(0, start - padding)
         end = min(len(audio), end + padding)
         output_audio = audio[start:end]
-        output_file = os.path.join(output_dir, f"{project_name}_{i+1}.mp3")
+        output_file = os.path.join(output_dir, f"audio_{project_name}_{i+1}.mp3")
         output_audio.export(output_file, format="mp3")
