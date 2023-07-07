@@ -6,6 +6,8 @@ from ttkthemes import ThemedStyle
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
 import os
+import sys
+import subprocess
 import re
 import datetime
 
@@ -113,10 +115,21 @@ class Application(ttk.Frame):
         # Run button
         self.run_button = ttk.Button(self, text="RUN", command=self.check)
         self.run_button.pack(side="bottom", pady=(10, 0))  # Add padding at the top
+        
+        # Open Output Folder button
+        self.open_folder_button = ttk.Button(self, text="Open Output Folder", command=self.open_output_folder)
+        self.open_folder_button.pack(side="bottom", pady=(10, 0))  # Add padding at the top
 
         # Progress bar (initially hidden)
         self.progress = ttk.Progressbar(self, length=200, mode='indeterminate')
 
+    def open_output_folder(self):
+        output_dir = os.path.join('output', datetime.datetime.now().strftime('%Y%m%d'))
+        if sys.platform == 'win32':
+            os.startfile(output_dir)
+        else:
+            subprocess.call(['open', output_dir])
+    
     def select_file(self):
         self.file_path = filedialog.askopenfilename(filetypes=[("MP4 files", "*.mp4")])
         if self.file_path:
@@ -139,18 +152,21 @@ class Application(ttk.Frame):
         self.progress.pack(side="bottom")
         self.progress.start()
 
-        print(f"Running in {self.mode_var.get()} mode")
+        try:
+            print(f"Running in {self.mode_var.get()} mode")
 
-        if self.mode_var.get() == "subtitle":
-            subtitle_generator.generate_subtitles(subtitle_text, project_name)
-        elif self.mode_var.get() == "remove_silence":
-            silence_remover.remove_silence(file_path, project_name)
+            if self.mode_var.get() == "subtitle":
+                subtitle_generator.generate_subtitles(subtitle_text, project_name)
+            elif self.mode_var.get() == "remove_silence":
+                silence_remover.remove_silence(file_path, project_name)
 
-        # Stop progress bar
-        self.progress.stop()
-        self.progress.pack_forget()
-
-        messagebox.showinfo("Info", "Operation completed successfully!")
+            messagebox.showinfo("Info", "Operation completed successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+        finally:
+            # Stop progress bar
+            self.progress.stop()
+            self.progress.pack_forget()
 
 root = tk.Tk()
 style = ThemedStyle(root)
