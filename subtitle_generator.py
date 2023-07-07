@@ -41,5 +41,5 @@ def generate_subtitles(subtitle_text, project_name):
             y_text += line_height
         overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))  # adjust last value for opacity, 0-255
         img = Image.alpha_composite(img, overlay)
-        filename = os.path.join(output_dir, f"{project_name}_{index_of_subtitle}.png")
+        filename = os.path.join(output_dir, f"image_{project_name}_{index_of_subtitle}.png")
         img.save(filename)
