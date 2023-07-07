@@ -8,7 +8,7 @@ It is meant for creators that want basic subtitles as images, without having to 
 
 This app is meant to serve a smaller target of users who want to generate just subtitles images in the order of 10 to 50 images. I have not tested higher amounts or too many different styles. A big change in configurations could result in unwanted appearance. 
 
-Use at your own risk, especially after the implementation ot text to speech features. 
+Use at your own risk, especially after the implementation of text to speech features. 
 
 ## Features
 
