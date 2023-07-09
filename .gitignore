@@ -1,5 +1,8 @@
 *.png
-!readme-images/*.png
 *.mp3
-__pycache__
+*.spec
 output
+!readme-images/*.png
+__pycache__
+build
+dist
