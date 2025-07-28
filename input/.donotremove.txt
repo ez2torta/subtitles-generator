@@ -1,0 +1,5 @@
+# Carpeta de entrada para archivos de subtítulos
+
+Coloca aquí tus archivos .txt de subtítulos.
+
+Este archivo existe para que la carpeta no sea eliminada accidentalmente.

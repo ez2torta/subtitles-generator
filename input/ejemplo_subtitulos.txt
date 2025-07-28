@@ -1,0 +1,5 @@
+Hola, este es el primer subtítulo.
+
+Este es el segundo subtítulo, que aparecerá en una imagen diferente.
+
+¡Y este es el tercero! Puedes agregar tantos como quieras, separados por una línea en blanco.

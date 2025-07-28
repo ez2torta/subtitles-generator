@@ -11,7 +11,9 @@ def main():
     # Subparser for generating subtitles
     parser_sub = subparsers.add_parser("subtitle", help="Generar imágenes de subtítulos a partir de texto")
     parser_sub.add_argument("--project", required=True, help="Nombre del proyecto (carpetas y archivos)")
-    parser_sub.add_argument("--textfile", required=True, help="Archivo de texto con los subtítulos")
+    parser_sub.add_argument("--textfile", required=True, help="Archivo de texto con los subtítulos (por defecto busca en input/)")
+    parser_sub.add_argument("--input_dir", default="input", help="Carpeta de entrada de archivos de subtítulos (default: input)")
+    parser_sub.add_argument("--output_dir", default="output", help="Carpeta de salida para imágenes (default: output)")
     parser_sub.add_argument("--font", required=False, help="Nombre del archivo de fuente TTF en la carpeta fonts (ej: Roboto-Bold.ttf)")
     parser_sub.add_argument("--text_alignment", default="center", choices=["center", "left", "right"], help="Alineación del texto")
     parser_sub.add_argument("--line_separation", type=float, default=1.0, help="Separación entre líneas (ej: 0.5 para más junto)")
@@ -34,10 +36,14 @@ def main():
     args = parser.parse_args()
 
     if args.command == "subtitle":
-        if not os.path.isfile(args.textfile):
-            print(f"Archivo de texto no encontrado: {args.textfile}")
+        # Construir ruta de input
+        textfile_path = args.textfile
+        if not os.path.isabs(textfile_path):
+            textfile_path = os.path.join(args.input_dir, args.textfile)
+        if not os.path.isfile(textfile_path):
+            print(f"Archivo de texto no encontrado: {textfile_path}")
             sys.exit(1)
-        with open(args.textfile, "r", encoding="utf-8") as f:
+        with open(textfile_path, "r", encoding="utf-8") as f:
             subtitle_text = f.read()
         font_path = None
         if args.font:
@@ -61,7 +67,8 @@ def main():
             shadow_color=args.shadow_color,
             shadow_alpha=args.shadow_alpha,
             shadow_blur=args.shadow_blur,
-            img_width=args.img_width
+            img_width=args.img_width,
+            output_dir=args.output_dir
         )
         print("Subtítulos generados correctamente.")
     elif args.command == "remove_silence":

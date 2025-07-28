@@ -9,19 +9,22 @@ def generate_subtitles(
     text_alignment="center", line_separation=1.0, font_size=48, font_color="#FFFFFF",
     alpha_threshold=255, border_size=4, border_color="#000000",
     shadow_size=2, shadow_color="#000000", shadow_alpha=128, shadow_blur=0,
-    img_width=1080
+    img_width=1080, output_dir="output"
 ):
     # Split the contents into subtitles (separated by empty lines)
     subtitles = [subtitle.strip() for subtitle in subtitle_text.split('\n\n') if subtitle.strip() != '']
 
-    # Insert a line break every 13 words
+    # Respetar saltos de línea manuales y ajustar solo líneas largas
     subtitles_with_breaks = []
     for subtitle in subtitles:
-        words = subtitle.split(' ')
-        result = ''
-        for i in range(0, len(words), 13):
-            result += ' '.join(words[i:i + 13]) + '\n'
-        subtitles_with_breaks.append(result.strip())
+        # Dividir el bloque en líneas manuales
+        manual_lines = subtitle.split('\n')
+        processed_lines = []
+        for line in manual_lines:
+            # Ajustar solo si la línea es muy larga
+            wrapped = textwrap.wrap(line, width=40) if line.strip() else ['']
+            processed_lines.extend(wrapped)
+        subtitles_with_breaks.append(processed_lines)
 
     def get_font(font_path=None, font_size=48):
         if font_path and os.path.isfile(font_path):
@@ -63,15 +66,14 @@ def generate_subtitles(
             font_name = 'default'
 
     # Define the output directory (con subcarpeta de fuente)
-    output_dir = os.path.join('output', datetime.now().strftime('%Y%m%d'), font_name)
+    output_dir = os.path.join(output_dir, datetime.now().strftime('%Y%m%d'), font_name)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     # Generate image for each subtitle
     max_lines_per_image = 2
     subtitle_img_index = 1
-    for index_of_subtitle, subtitle in enumerate(subtitles_with_breaks, start=1):
-        lines = textwrap.wrap(subtitle, width=40)
+    for index_of_subtitle, lines in enumerate(subtitles_with_breaks, start=1):
         def get_text_size(text):
             if hasattr(font, 'getbbox'):
                 bbox = font.getbbox(text)
@@ -86,34 +88,28 @@ def generate_subtitles(
             block = lines[i:i+max_lines_per_image]
             line_height = get_text_size('hg')[1] * line_separation
             img_height = padding + int(line_height * len(block)) + padding + 40
-            # img_width fijo
             width = img_width
             img = Image.new('RGBA', (width, img_height), (0, 0, 0, 0))
             d = ImageDraw.Draw(img)
             y_text = padding + 20
             for line in block:
                 line_width = get_text_size(line)[0]
-                # Alineación
                 if text_alignment == "center":
                     x = (width - line_width) / 2
                 elif text_alignment == "left":
                     x = padding
                 else:
                     x = width - line_width - padding
-                # Dibuja borde
                 for dx in range(-border_size, border_size+1):
                     for dy in range(-border_size, border_size+1):
                         if dx != 0 or dy != 0:
                             d.text((x + dx, y_text + dy), line, font=font, fill=border_color)
-                # Dibuja sombra
                 if shadow_size > 0:
                     for dx in range(shadow_size, shadow_size+shadow_blur+1):
                         for dy in range(shadow_size, shadow_size+shadow_blur+1):
                             d.text((x + dx, y_text + dy), line, font=font, fill=shadow_color)
-                # Dibuja texto principal
                 d.text((x, y_text), line, font=font, fill=font_color)
                 y_text += line_height
-            # Guardar imagen
             output_file = os.path.join(output_dir, f"subtitle_{project_name}_{subtitle_img_index}.png")
             img.save(output_file)
             subtitle_img_index += 1
