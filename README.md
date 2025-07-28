@@ -1,34 +1,56 @@
+
+
 # Subtitle Generator
 
-Subtitle Generator is a simple and easy-to-use Python application that can generate subtitle images from text, remove silence from MP4 files, and even provide text-to-speech (TTS) capabilities with an external API.
+Subtitle Generator es una aplicación Python 100% de línea de comandos (CLI) para generar imágenes de subtítulos a partir de texto, remover silencios de archivos MP4 y soporta múltiples fuentes tipográficas.
 
-It is meant for creators that want basic subtitles as images, without having to deal with one-by-one convertion or paid/limited services. 
 
-## Disclaimer
+## Características
 
-This app is meant to serve a smaller target of users who want to generate just subtitles images in the order of 10 to 50 images. I have not tested higher amounts or too many different styles. A big change in configurations could result in unwanted appearance. 
+1. **Generación de subtítulos**: Genera imágenes PNG para cada subtítulo, dividiendo automáticamente los textos largos en varias imágenes de máximo 2 líneas cada una.
+2. **Soporte de fuentes**: Coloca archivos `.ttf` en la carpeta `fonts/` y elige la fuente con `--font`. Si no se especifica, se usa la primera fuente disponible.
+3. **Remoción de silencios**: Divide un MP4 en segmentos de audio sin silencio.
+4. **Limpieza fácil**: Ejecuta `python3 clean_output.py` para borrar la carpeta de salida y las fuentes no regulares.
 
-Use at your own risk, especially after the implementation of text to speech features. 
 
-## Features
+## Cómo usar
 
-1. **Subtitle Generation**: Paste your text in the provided text field, select the "Subtitles" mode, and click "Run". The application will generate PNG images for each line of text and save them in a timestamped folder.
-2. **Silence Removal**: Select the "Remove Silence" mode, select the MP4 file and click "Run". The application will output a series of MP3 files, each containing a non-silent segment from the original audio.
-3. **Text-to-Speech**: Coming soon! This feature will utilize the Azure voice Microsoft Text-to-Speech API to convert your text into speech, you can customize the code related to text-to-speech to use an open source or free option.
+1. Coloca tu texto en un archivo `.txt` (cada subtítulo separado por una línea en blanco).
+2. Ejecuta el comando CLI para generar subtítulos o remover silencios (ver ejemplos abajo).
+3. Puedes personalizar la fuente agregando archivos `.ttf` a la carpeta `fonts/` y usando el argumento `--font`.
 
-![home screen](readme-images/image1.png)
+### Ejemplo de uso CLI
 
-## How to Use
+Generar subtítulos con una fuente específica:
+```sh
+python3 cli.py subtitle --project demo --textfile subtitles.txt --font Roboto-Regular.ttf
+```
 
-1. Open the application.
-2. For Subtitle Generation, paste your text in the text field at the top (a new subtitle is detected when there is an empty line)
-3. For Silence Removal, use the "Select MP4 file" button to choose your file.
-4. Select your desired mode from the drop-down menu.
-5. Click "Run" to execute the chosen operation.
+Remover silencios de un video:
+```sh
+python3 cli.py remove_silence --project demo --input video.mp4
+```
 
-You can customize the look of the subtitle directly into the code itself.
+Limpiar la salida y dejar solo fuentes regulares:
+```sh
+python3 clean_output.py
+```
 
-## Future Enhancements
+## Organización de la salida
 
-- Integration with Azure voice Microsoft Text-to-Speech API for Text-to-Speech feature.
-- Enhanced user interface with settings/customizations tab.
+Los archivos generados se guardan en:
+
+```
+output/YYYYMMDD/NOMBRE_FUENTE/subtitle_NOMBREPROYECTO_#.png
+```
+
+## Personalización
+
+- Puedes agregar más fuentes `.ttf` a la carpeta `fonts/`.
+- El código divide automáticamente subtítulos largos en varias imágenes.
+- Puedes ajustar el tamaño de fuente y otros estilos en `subtitle_generator.py`.
+
+## Créditos y futuro
+
+- Inspirado en la necesidad de creadores de contenido para subtítulos rápidos y personalizables.
+- Próximamente: integración con Text-to-Speech.
