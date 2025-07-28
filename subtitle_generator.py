@@ -4,7 +4,13 @@ from datetime import datetime
 import os
 import glob
 
-def generate_subtitles(subtitle_text, project_name, font_path=None):
+def generate_subtitles(
+    subtitle_text, project_name, font_path=None,
+    text_alignment="center", line_separation=1.0, font_size=48, font_color="#FFFFFF",
+    alpha_threshold=255, border_size=4, border_color="#000000",
+    shadow_size=2, shadow_color="#000000", shadow_alpha=128, shadow_blur=0,
+    img_width=1080
+):
     # Split the contents into subtitles (separated by empty lines)
     subtitles = [subtitle.strip() for subtitle in subtitle_text.split('\n\n') if subtitle.strip() != '']
 
@@ -42,7 +48,6 @@ def generate_subtitles(subtitle_text, project_name, font_path=None):
                 print("[ADVERTENCIA] No se encontró ninguna fuente TTF válida. Usando fuente por defecto.")
                 return ImageFont.load_default()
 
-    font_size = 48
     font = get_font(font_path=font_path, font_size=font_size)
     padding = 10
 
@@ -67,7 +72,6 @@ def generate_subtitles(subtitle_text, project_name, font_path=None):
     subtitle_img_index = 1
     for index_of_subtitle, subtitle in enumerate(subtitles_with_breaks, start=1):
         lines = textwrap.wrap(subtitle, width=40)
-        # Función auxiliar para obtener tamaño de texto compatible
         def get_text_size(text):
             if hasattr(font, 'getbbox'):
                 bbox = font.getbbox(text)
@@ -80,29 +84,38 @@ def generate_subtitles(subtitle_text, project_name, font_path=None):
         # Dividir en bloques de máximo 2 líneas
         for i in range(0, len(lines), max_lines_per_image):
             block = lines[i:i+max_lines_per_image]
-            line_height = get_text_size('hg')[1]
-            img_height = padding + line_height * len(block) + padding + 40
-            img_width = max([get_text_size(line)[0] for line in block]) + 2 * padding + 80
-            img = Image.new('RGBA', (img_width, img_height), (0, 0, 0, 0))
+            line_height = get_text_size('hg')[1] * line_separation
+            img_height = padding + int(line_height * len(block)) + padding + 40
+            # img_width fijo
+            width = img_width
+            img = Image.new('RGBA', (width, img_height), (0, 0, 0, 0))
             d = ImageDraw.Draw(img)
             y_text = padding + 20
             for line in block:
                 line_width = get_text_size(line)[0]
-                x = (img_width - line_width) / 2
-                # Dibuja borde negro
-                for dx in [-2, -1, 0, 1, 2]:
-                    for dy in [-2, -1, 0, 1, 2]:
+                # Alineación
+                if text_alignment == "center":
+                    x = (width - line_width) / 2
+                elif text_alignment == "left":
+                    x = padding
+                else:
+                    x = width - line_width - padding
+                # Dibuja borde
+                for dx in range(-border_size, border_size+1):
+                    for dy in range(-border_size, border_size+1):
                         if dx != 0 or dy != 0:
-                            d.text((x + dx, y_text + dy), line, font=font, fill='black')
-                # Dibuja texto blanco encima
-                d.text((x, y_text), line, font=font, fill='white')
+                            d.text((x + dx, y_text + dy), line, font=font, fill=border_color)
+                # Dibuja sombra
+                if shadow_size > 0:
+                    for dx in range(shadow_size, shadow_size+shadow_blur+1):
+                        for dy in range(shadow_size, shadow_size+shadow_blur+1):
+                            d.text((x + dx, y_text + dy), line, font=font, fill=shadow_color)
+                # Dibuja texto principal
+                d.text((x, y_text), line, font=font, fill=font_color)
                 y_text += line_height
             # Guardar imagen
             output_file = os.path.join(output_dir, f"subtitle_{project_name}_{subtitle_img_index}.png")
             img.save(output_file)
             subtitle_img_index += 1
             y_text += line_height
-        overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))  # adjust last value for opacity, 0-255
-        img = Image.alpha_composite(img, overlay)
-        filename = os.path.join(output_dir, f"image_{project_name}_{index_of_subtitle}.png")
-        img.save(filename)
+        # Eliminada la generación de archivos image_*
